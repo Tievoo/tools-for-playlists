@@ -44,7 +44,11 @@ export interface Image {
 
 export interface Track {
     artists: Artist[]
+    album: Album
     available_markets: string[]
+    external_urls: {
+        spotify: string
+    }
     disc_number: number
     duration_ms: number
     episode: boolean;
@@ -59,6 +63,24 @@ export interface Track {
     type: string
     uri: string
     is_playable?: boolean
+}
+
+export interface Album {
+    album_type: string
+    artists: Artist[]
+    available_markets: string[]
+    external_urls: {
+        spotify: string
+    }
+    href: string
+    id: string
+    images: Image[]
+    name: string
+    release_date: string
+    release_date_precision: string
+    total_tracks: number
+    type: string
+    uri: string
 }
 
 export interface AddedBy {
@@ -117,4 +139,4 @@ export interface PlaylistedTrack<Item extends TrackItem = TrackItem> {
     track: Item
 }
 
-export type TrackItem = Track | Episode;
+export type TrackItem = Track;

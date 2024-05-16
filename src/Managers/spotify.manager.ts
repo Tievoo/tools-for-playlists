@@ -2,6 +2,7 @@ import { Playlist } from "../Types/spotify.types"
 import { AuthState } from "../store"
 
 export async function get(url: string, token: string) : Promise<Playlist> {
+    console.log("Retriggering from get")
 
     const r = await fetch('https://api.spotify.com/v1/' + url, {
         headers: {

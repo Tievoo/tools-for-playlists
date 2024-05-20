@@ -4,7 +4,7 @@ import { get } from "../../Managers/spotify.manager";
 import { useParams } from "react-router-dom";
 import { Playlist } from "../../Types/spotify.types";
 import PlaylistComponent from "./Components/Playlist";
-import useTop5Artists from "../../Hooks/useTop5Artists";
+import useTopArtists from "../../Hooks/useTopArtists";
 
 function Detail() {
     const auth = useAuthStore();
@@ -19,12 +19,31 @@ function Detail() {
         queryFn: async () =>
             get(
                 "playlists/" + id,
-                auth.token ||
-                    JSON.parse(localStorage.getItem("auth") || "{}").token
+                auth || JSON.parse(localStorage.getItem("auth") || "{}")
             ),
+        
     });
 
-    const top5 = useTop5Artists(playlist);
+    const top = useTopArtists(10, playlist);
+
+    const getPercentageWidth = (percentage: number) => {
+        return percentage/(Math.min(top[0][2] + 20,  100)) *5 + "rem"
+    }
+
+    const getPTextWidth = () => {
+        const digits = top[0][2].toFixed(0).length
+        return digits * 0.9 + "rem"
+    }
+
+    const getPercentageColor = (percentage: number) => {
+        if (percentage > 40) {
+            return "bg-green-500"
+        } else if (percentage > 10) {
+            return "bg-yellow-500"
+        } else {
+            return "bg-red-500"
+        }
+    }
 
     if (
         fetchStatus === "fetching" &&
@@ -46,18 +65,27 @@ function Detail() {
                 <PlaylistComponent playlist={playlist} />
                 <div className="flex flex-col w-1/2 gap-3">
                     <div className="flex flex-col rounded-md bg-gray-main p-4 w-full">
-                        <span className="text-2xl font-bold">Top 5 Artistas</span>
+                        <span className="text-2xl font-bold">Top {10} Artistas</span>
                         {
-                            top5.map((artist, i) => (
+                            top.map((artist, i) => (
                                 <div
-                                    key={artist}
+                                    key={artist[0]}
                                     className="flex flex-row justify-between items-center rounded hover:bg-gray-500 px-2 py-1"
                                 >
                                     <div className="flex flex-row gap-3 items-center">
-                                        <span className="font-medium w-2 text-right">
+                                        <span className="font-medium w-5 text-right">
                                             {i + 1}.
                                         </span>
-                                        <span>{artist}</span>
+                                        <span>{artist[0]}</span>
+                                    </div>
+                                    <div className="flex flex-row gap-2 items-center">
+                                        <span className="text-right w-28">{artist[1]} tracks</span>
+                                        <div className="w-20 h-2" >
+                                            <div className={getPercentageColor(artist[2]) + " h-2 rounded"} style={{ width: getPercentageWidth(artist[2])}}/>
+                                        </div>
+                                        <span className="text-right" style={{width:getPTextWidth()}}>
+                                            {artist[2].toFixed(0)}%
+                                        </span>
                                     </div>
                                 </div>
                             ))

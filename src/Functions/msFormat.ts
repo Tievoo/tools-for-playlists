@@ -5,5 +5,5 @@ export function msFormat(ms: number) {
 
     return `${
         hours > 0 ? hours + ":" : ""
-    }${minutes > 0 ? minutes + ":" : ""}${seconds}`;
+    }${minutes > 0 ? minutes + ":" : ""}${seconds % 10 === seconds ? "0" + seconds : seconds}`;
 }

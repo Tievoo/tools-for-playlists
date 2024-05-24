@@ -32,6 +32,13 @@ body {
   font-family: "CircularSpotifyText", system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
+.text-spoti {
+  color: #1ED760
+}
+
+.bg-spoti {
+  background-color: #1ED760
+}
 
 @media (prefers-color-scheme: light) {
   :root {

@@ -22,7 +22,12 @@ function Home() {
     }, [location]);
 
     return (
-        <div className="flex flex-col w-full items-center">
+        <div className="flex flex-col w-full items-center relative">
+                <button className="mr-3 mt-2 p-2 px-3 bg-spoti  rounded-full absolute right-0">
+                    <span className=" font-semibold text-black font-spoti">
+                        Login
+                    </span>
+                </button>
             <div
                 className="flex flex-col items-center home-move w-full"
                 style={{
@@ -35,7 +40,7 @@ function Home() {
                 }}
             >
                 <span>ToolsForPlaylists</span>
-                <div className="flex flex-row gap-1 w-1/3">
+                <div className="flex flex-row gap-1 w-2/3 md:w-1/3">
                     <input
                         className="w-full"
                         type="text"

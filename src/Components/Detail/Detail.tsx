@@ -5,10 +5,12 @@ import { useParams } from "react-router-dom";
 import { Playlist } from "../../Types/spotify.types";
 import PlaylistComponent from "./Components/Playlist";
 import useTopArtists from "../../Hooks/useTopArtists";
+import useIsMobile from "../../Hooks/useIsMobile";
 
 function Detail() {
     const auth = useAuthStore();
     const { id } = useParams();
+    const isMobile = useIsMobile();
 
     const {
         data: playlist,
@@ -27,7 +29,7 @@ function Detail() {
     const top = useTopArtists(10, playlist);
 
     const getPercentageWidth = (percentage: number) => {
-        return percentage/(Math.min(top[0][2] + 20,  100)) *5 + "rem"
+        return percentage/(Math.min(top[0][2] + 20,  100)) *(isMobile ? 4 :5) + "rem"
     }
 
     const getPTextWidth = () => {
@@ -59,11 +61,11 @@ function Detail() {
     if (playlist !== undefined && playlist.id === id) {
         return (
             <div
-                className="flex flex-row w-full mt-16 px-10 font-spoti gap-5"
+                className="flex flex-col md:flex-row w-full mt-16 px-3 md:px-10 font-spoti gap-5"
                 style={{ height: "75vh" }}
             >
                 <PlaylistComponent playlist={playlist} />
-                <div className="flex flex-col w-1/2 gap-3">
+                <div className="flex flex-col w-full md:w-1/2 gap-3">
                     <div className="flex flex-col rounded-md bg-gray-main p-4 w-full">
                         <span className="text-2xl font-bold">Top {10} Artistas</span>
                         {
@@ -73,14 +75,14 @@ function Detail() {
                                     className="flex flex-row justify-between items-center rounded hover:bg-gray-500 px-2 py-1"
                                 >
                                     <div className="flex flex-row gap-3 items-center">
-                                        <span className="font-medium w-5 text-right">
+                                        <span className="font-medium w-5 text-left md:text-right">
                                             {i + 1}.
                                         </span>
                                         <span>{artist[0]}</span>
                                     </div>
                                     <div className="flex flex-row gap-2 items-center">
                                         <span className="text-right w-28">{artist[1]} tracks</span>
-                                        <div className="w-20 h-2" >
+                                        <div className="w-16 md:w-20 h-2" >
                                             <div className={getPercentageColor(artist[2]) + " h-2 rounded"} style={{ width: getPercentageWidth(artist[2])}}/>
                                         </div>
                                         <span className="text-right" style={{width:getPTextWidth()}}>

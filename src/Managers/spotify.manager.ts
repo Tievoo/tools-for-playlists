@@ -27,7 +27,7 @@ export async function get(url: string, state: AuthState): Promise<Playlist> {
         // const tracks : PlaylistedTrack<Track>[] = [...nextD.items.map((i:any)=>i.track)].filter((t:Track)=>!!t)
         const items = nextD.items.filter((i: any) => !!i.track)
         playlist.tracks.items = playlist.tracks.items.concat(items)
-        
+
     }
     console.log(playlist.tracks.items)
     return playlist
@@ -84,4 +84,29 @@ export async function refreshAuth(auth: AuthState) {
         JSON.stringify(newAuth)
     );
     return token;
+}
+
+export async function login(auth: AuthState) {
+    var client_id = 'CLIENT_ID';
+    var redirect_uri = 'http://localhost:8888/callback';
+
+    var state = generateRandomString(16);
+
+    localStorage.setItem("login-state", state);
+    var scope = 'user-read-private user-read-email';
+
+    var url = 'https://accounts.spotify.com/authorize';
+    url += '?response_type=token';
+    url += '&client_id=' + encodeURIComponent(client_id);
+    url += '&scope=' + encodeURIComponent(scope);
+    url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+    url += '&state=' + encodeURIComponent(state);
+
+    
+}
+
+const generateRandomString = (length: number) => {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const values = crypto.getRandomValues(new Uint8Array(length));
+    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 }

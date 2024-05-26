@@ -42,9 +42,10 @@ function Home() {
                 <span>ToolsForPlaylists</span>
                 <div className="flex flex-row gap-1 w-2/3 md:w-1/3">
                     <input
-                        className="w-full"
+                        className="w-full p-1 px-2"
                         type="text"
                         value={search || ""}
+                        placeholder="Paste a playlist url"
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <button

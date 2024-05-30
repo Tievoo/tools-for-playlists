@@ -7,12 +7,22 @@ import Detail from "./Components/Detail/Detail";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { handleStartAuth } from "./Managers/spotify.manager";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Callback from "./Components/Callback";
+import Me from "./Components/Me/Me";
 
 const router = createBrowserRouter([
+    {
+        path: "/callback",
+        element: <Callback />,
+    },
     {
         path: "/",
         element: <Home />,
         children: [
+            {
+                path: "/me",
+                element: <Me />,
+            },
             {
                 path: "/:id",
                 element: <Detail />,

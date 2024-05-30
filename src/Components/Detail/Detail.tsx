@@ -6,11 +6,13 @@ import { Playlist } from "../../Types/spotify.types";
 import PlaylistComponent from "./Components/Playlist";
 import useTopArtists from "../../Hooks/useTopArtists";
 import useIsMobile from "../../Hooks/useIsMobile";
+import { useMemo, useState } from "react";
 
 function Detail() {
     const auth = useAuthStore();
     const { id } = useParams();
     const isMobile = useIsMobile();
+    const [loadingName, setLoadingName] = useState<string | null>(null)
 
     const {
         data: playlist,
@@ -21,7 +23,8 @@ function Detail() {
         queryFn: async () =>
             get(
                 "playlists/" + id,
-                auth || JSON.parse(localStorage.getItem("auth") || "{}")
+                auth || JSON.parse(localStorage.getItem("auth") || "{}"),
+                setLoadingName
             ),
         
     });
@@ -32,10 +35,11 @@ function Detail() {
         return percentage/(Math.min(top[0][2] + 20,  100)) *(isMobile ? 4 :5) + "rem"
     }
 
-    const getPTextWidth = () => {
+    const textWidth = useMemo(() => {
+        if (!top[0]) return "0rem"
         const digits = top[0][2].toFixed(0).length
         return digits * 0.9 + "rem"
-    }
+    }, [top[0]])
 
     const getPercentageColor = (percentage: number) => {
         if (percentage > 40) {
@@ -51,7 +55,9 @@ function Detail() {
         fetchStatus === "fetching" &&
         (playlist === undefined || playlist.id !== id)
     ) {
-        return <div>Loading...</div>;
+        return <div>{
+            loadingName ? `Found playlist: ${loadingName}. Getting tracks...` : "Loading playlist..."
+        }</div>;
     }
 
     if (status === "error") {
@@ -85,7 +91,7 @@ function Detail() {
                                         <div className="w-16 md:w-20 h-2" >
                                             <div className={getPercentageColor(artist[2]) + " h-2 rounded"} style={{ width: getPercentageWidth(artist[2])}}/>
                                         </div>
-                                        <span className="text-right" style={{width:getPTextWidth()}}>
+                                        <span className="text-right" style={{width:textWidth}}>
                                             {artist[2].toFixed(0)}%
                                         </span>
                                     </div>

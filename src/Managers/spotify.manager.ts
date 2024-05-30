@@ -1,7 +1,8 @@
-import { Playlist } from "../Types/spotify.types"
+import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
 import { AuthState } from "../store"
+import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
-export async function get(url: string, state: AuthState): Promise<Playlist> {
+export async function get(url: string, state: AuthState, setLoadingName : (n: string) => void): Promise<Playlist> {
     let aToken = state.token;
     if (!state.token || state.validUntil < Date.now()) {
         aToken = await refreshAuth(state);
@@ -14,6 +15,7 @@ export async function get(url: string, state: AuthState): Promise<Playlist> {
     })
 
     const playlist: Playlist = await r.json()
+    setLoadingName(playlist.name)
     let next = playlist.tracks.next
     while (playlist.tracks.items.length < playlist.tracks.total && next) {
         const r = await fetch(next!, {
@@ -33,16 +35,33 @@ export async function get(url: string, state: AuthState): Promise<Playlist> {
     return playlist
 }
 
-// export function get_me(url: string, token: string) {
-//     return get('me/' + url, token)
-// }
+export async function me(state: AuthState): Promise<SimplifiedPlaylist[]> {
+    let aToken = state.token;
+    if (!state.token || state.validUntil < Date.now()) {
+        aToken = await refreshAuth(state);
+    }
+
+    //TODO handle mas de una pág
+    const r = await fetch('https://api.spotify.com/v1/me/playlists', {
+        headers: {
+            Authorization: 'Bearer ' + aToken
+        }
+    })
+    const playlists : { items: SimplifiedPlaylist[] } = await r.json()
+    return playlists.items
+}
 
 export async function token_no_user(): Promise<string> {
     const t = await fetch("https://tfp-no-user-auth.tievolib8216.workers.dev/")
     return t.text()
 }
 
-export async function handleStartAuth(auth: AuthState): Promise<string> {
+export function token_with_user(): void {
+    const url = generateLoginUrl()
+    window.location.href = url
+}
+
+export async function handleStartAuth(auth: AuthState): Promise<void> {
     const authInfo: Partial<AuthState> = JSON.parse(
         localStorage.getItem("auth") || "{}"
     );
@@ -52,25 +71,22 @@ export async function handleStartAuth(auth: AuthState): Promise<string> {
         authInfo.token
     ) {
         auth.setToken(authInfo);
-        return authInfo.token;
+        return
     } else {
-        const token = await token_no_user();
-        const newAuth: Partial<AuthState> = {
-            token,
-            validUntil: Date.now() + 3600000,
-            isUser: false,
-        };
+        // if (authInfo.isUser) {
+        //     token_with_user()
+        //     return 
+        // }
 
-        auth.setToken(newAuth);
-        localStorage.setItem(
-            "auth",
-            JSON.stringify(newAuth)
-        );
-        return token;
+        await refreshAuth(auth)
     }
 }
 
 export async function refreshAuth(auth: AuthState) {
+    if (auth.isUser) {
+        token_with_user()
+        return ""
+    }
     const token = await token_no_user();
     const newAuth: Partial<AuthState> = {
         token,
@@ -84,29 +100,4 @@ export async function refreshAuth(auth: AuthState) {
         JSON.stringify(newAuth)
     );
     return token;
-}
-
-export async function login(auth: AuthState) {
-    var client_id = 'CLIENT_ID';
-    var redirect_uri = 'http://localhost:8888/callback';
-
-    var state = generateRandomString(16);
-
-    localStorage.setItem("login-state", state);
-    var scope = 'user-read-private user-read-email';
-
-    var url = 'https://accounts.spotify.com/authorize';
-    url += '?response_type=token';
-    url += '&client_id=' + encodeURIComponent(client_id);
-    url += '&scope=' + encodeURIComponent(scope);
-    url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
-    url += '&state=' + encodeURIComponent(state);
-
-    
-}
-
-const generateRandomString = (length: number) => {
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const values = crypto.getRandomValues(new Uint8Array(length));
-    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 }

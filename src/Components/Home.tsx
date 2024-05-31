@@ -13,7 +13,7 @@ function Home() {
 
     const [search, setSearch] = usePlaylistInput();
 
-    const inDetail = useMemo(() => location.pathname.length > 1, [location]);
+    const inDetail = useMemo(() => location.pathname.length > 1 && location.pathname[1] !== "me", [location]);
 
     useEffect(() => {
         if (inDetail && search && search.length === 0) {

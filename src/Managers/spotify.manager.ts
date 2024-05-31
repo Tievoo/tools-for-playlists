@@ -90,8 +90,8 @@ export async function getAllTops(tops: TopState, state: AuthState) {
     data.forEach((d, i) => {
         const type = i < 3 ? "artists" : "tracks"
         const time = i % 3 === 0 ? "long" : i % 3 === 1 ? "medium" : "short"
-        d.items.forEach((topData: any) => {
-            const items = topData.items
+        console.log(d)
+        d.items.forEach((items: any) => {
             console.log(items)
             items.forEach((item: any, i : number) => {
                 const id = type === "artists" ? item.name : item.artists.map((a: any) => a.name).join(", ")

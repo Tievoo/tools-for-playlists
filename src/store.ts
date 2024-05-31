@@ -24,7 +24,8 @@ export interface TopState {
         medium: Map<string, number>
         short: Map<string, number>
     }
-
+    canSearch: boolean;
+    setCanSearch: (canSearch: boolean) => void;
     setArtists: (artists: TopState["artists"]) => void;
     setTracks: (tracks: TopState["tracks"]) => void;
 }
@@ -52,6 +53,8 @@ export const useTopStore = create<TopState>((set) => ({
         medium: new Map<string, number>(),
         short: new Map<string, number>(),
     },
+    canSearch: false,
+    setCanSearch: (canSearch) => set({ canSearch }),
     setArtists: (artists) => set({ artists }),
     setTracks: (tracks) => set({ tracks }),
 }));

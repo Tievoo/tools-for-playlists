@@ -28,6 +28,10 @@ body {
   background-color: #333;
 }
 
+.bg-gray-main-light {
+  background-color: #444;
+}
+
 .font-spoti {
   font-family: "CircularSpotifyText", system-ui, Avenir, Helvetica, Arial, sans-serif;
 }

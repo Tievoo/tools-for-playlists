@@ -1,5 +1,5 @@
 import usePlaylistInput from "../Hooks/usePlaylistInput";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store";
 import { useEffect, useMemo } from "react";
 import { FaXmark } from "react-icons/fa6";
@@ -8,6 +8,8 @@ import { generateLoginUrl } from "../Functions/generateLoginUrl";
 function Home() {
     const location = useLocation();
     const { isUser } = useAuthStore();
+    const auth = useAuthStore();
+    const navigate = useNavigate();
 
     const [search, setSearch] = usePlaylistInput();
 
@@ -19,6 +21,10 @@ function Home() {
                 "https://open.spotify.com/playlist/" +
                     location.pathname.slice(1)
             );
+        }
+
+        if (location.pathname === "/" && auth.isUser) {
+            navigate("/me");
         }
     }, [location]);
 
@@ -40,7 +46,7 @@ function Home() {
                             : "12rem",
                 }}
             >
-                <span>ToolsForPlaylists</span>
+                {/* <span>ToolsForPlaylists</span> */}
                 <div className="flex flex-row gap-1 w-2/3 md:w-1/3">
                     <input
                         className="w-full p-1 px-2 disabled:text-gray-400"

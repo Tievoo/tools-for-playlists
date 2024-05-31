@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { SimplifiedPlaylist } from "../../Types/spotify.types";
-import { useAuthStore } from "../../store";
-import { me } from "../../Managers/spotify.manager";
+import { useAuthStore, useTopStore } from "../../store";
+import { getAllTops, me } from "../../Managers/spotify.manager";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Me() {
     const auth = useAuthStore();
+    const top = useTopStore()
     const navigate = useNavigate();
     const { data, fetchStatus } = useQuery<SimplifiedPlaylist[]>({
         queryKey: ["me"],
@@ -16,6 +17,8 @@ function Me() {
     useEffect(() => {
         if (auth.token.length && !auth.isUser) {
             window.location.href = "/";
+        } else if (auth.token.length && auth.isUser) {
+            getAllTops(top, auth);
         }
     }, [auth]);
 

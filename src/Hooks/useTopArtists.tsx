@@ -1,22 +1,38 @@
 import { useEffect, useState } from "react";
 import { Playlist } from "../Types/spotify.types";
 
+export interface TopArtist {
+    name: string;
+    count: number;
+    percentage: number;
+    id: string;
+}
+
 export default function useTopArtists(n: number, playlist?: Playlist) {
-    const [top, setTop] = useState<[string, number, number][]>([]);
+    const [top, setTop] = useState<TopArtist[]>([]);
 
     function getTop() {
-        const artists: Record<string, number> = {};
+        const artists: Record<string, TopArtist> = {};
         for (const track of playlist!.tracks.items) {
             if (track?.track?.artists) {
                 for (const artist of track.track.artists) {
-                    artists[artist.name] = (artists[artist.name] || 0) + 1;
+                    if (artists[artist.id]) {
+                        artists[artist.id].count++;
+                    } else {
+                        artists[artist.id] = { name: artist.name, count: 1, percentage: 0, id: artist.id };
+                    }
                 }
             }
         }
-        const sortedArtists = Object.entries(artists).sort(
-            (a, b) =>  b[1] - a[1]
+        const sortedArtists = Object.values(artists).sort(
+            (a, b) =>  b.count - a.count
         );
-        setTop(sortedArtists.slice(0, n).map(([name, count]) => [name, count, count/playlist!.tracks.items.length * 100]));
+        setTop(sortedArtists.slice(0, n).map(
+            (art) => ({
+                ...art,
+                percentage: (art.count / playlist!.tracks.items.length) * 100
+            })
+        ));
     }
 
     useEffect(() => {

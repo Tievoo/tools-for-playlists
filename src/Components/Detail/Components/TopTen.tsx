@@ -1,17 +1,18 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import useIsMobile from "../../../Hooks/useIsMobile";
-import useTopArtists from "../../../Hooks/useTopArtists";
+import useTopN from "../../../Hooks/useTopN";
 import { Playlist } from "../../../Types/spotify.types";
-import { useTopStore } from "../../../store";
+import TopPill from "./TopPill";
 
 interface Props {
     playlist: Playlist;
 }
 
-function TopArtists({ playlist }: Props) {
+function TopTen({ playlist }: Props) {
     const isMobile = useIsMobile();
-    const top = useTopArtists(10, playlist);
-    const topState = useTopStore((state) => state.artists)
+    const [selected, setSelected] = useState<string>("artists" as "artists" | "albums");
+    const { topArtists, topAlbums } = useTopN(10, playlist);
+    const top = selected === "artists" ? topArtists : topAlbums;
 
     const getPercentageWidth = (percentage: number) => {
         return percentage/(Math.min(top[0].percentage + 20,  100)) *(isMobile ? 4 :5) + "rem"
@@ -36,7 +37,27 @@ function TopArtists({ playlist }: Props) {
     return (
         <div className="flex flex-col w-full gap-3">
             <div className="flex flex-col rounded-md bg-gray-main p-4 w-full">
-                <span className="text-2xl font-bold">Top {10} Artistas</span>
+                <div className="flex flex-row justify-between mb-2">
+                    <span className="text-2xl font-bold">Top {10} { selected === "artists" ? "Artists" : "Albums" }</span>
+                    <div className="flex flex-row gap-2 rounded-full bg-gray-main-light gap-2">
+                        <button
+                            onClick={() => setSelected("artists")}
+                            className={`rounded-full px-2 font-spoti ${
+                                selected === "artists" ? "bg-spoti text-black font-semibold" : ""
+                            }`}
+                        >
+                            Artists
+                        </button>
+                        <button
+                            onClick={() => setSelected("albums")}
+                            className={`rounded-full px-2 font-spoti ${
+                                selected === "albums" ? "bg-spoti text-black font-semibold" : ""
+                            }`}
+                        >
+                            Albums
+                        </button>
+                    </div>
+                </div>
                 {top.map((artist, i) => (
                     <div
                         key={artist.id}
@@ -47,27 +68,7 @@ function TopArtists({ playlist }: Props) {
                                 {i + 1}.
                             </span>
                             <span>{artist.name}</span>
-                            {
-                                topState.long.has(artist.id) && (
-                                    <span className="text-xs md:text-sm text-gray-400">
-                                        {topState.long.get(artist.id)}
-                                    </span>
-                                )
-                            }
-                            {
-                                topState.short.has(artist.id) && (
-                                    <span className="text-xs md:text-sm text-gray-400">
-                                        {topState.short.get(artist.id)}
-                                    </span>
-                                )
-                            }
-                            {
-                                topState.medium.has(artist.id) && (
-                                    <span className="text-xs md:text-sm text-gray-400">
-                                        {topState.medium.get(artist.id)}
-                                    </span>
-                                )
-                            }
+                            <TopPill id={artist.id} type="artists" />
                         </div>
                         <div className="flex flex-row gap-2 items-center">
                             <span className="text-right w-28">
@@ -98,4 +99,4 @@ function TopArtists({ playlist }: Props) {
     );
 }
 
-export default TopArtists;
+export default TopTen;

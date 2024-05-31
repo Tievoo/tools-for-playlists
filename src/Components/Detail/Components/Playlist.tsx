@@ -2,6 +2,8 @@ import { useState } from "react";
 import { msFormat } from "../../../Functions/msFormat";
 import { Playlist } from "../../../Types/spotify.types";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
+import TopPill from "./TopPill";
+import { removeFeat } from "../../../Functions/removeFeat";
 
 interface Props {
     playlist: Playlist;
@@ -50,9 +52,12 @@ export default function PlaylistComponent({ playlist }: Props) {
                                     alt=""
                                 />
                                 <div className="flex flex-col items-start">
-                                    <span className="text-left ">
-                                        {track.name}
-                                    </span>
+                                    <div className="flex flex-row gap-3 items-center">
+                                        <span className="font-medium">
+                                            {removeFeat(track.name)}
+                                        </span>
+                                        <TopPill id={track.id} type="tracks" />
+                                    </div>
                                     <span className=" text-left text-sm text-gray-400">
                                         {track?.artists &&
                                             track.artists

@@ -17,7 +17,7 @@ function Me() {
     useEffect(() => {
         if (auth.token.length && !auth.isUser) {
             window.location.href = "/";
-        } else if (auth.token.length && auth.isUser) {
+        } else if (auth.token.length && auth.isUser && top.canSearch) {
             getAllTops(top, auth);
         }
     }, [auth]);
@@ -32,7 +32,7 @@ function Me() {
                 {data.map((playlist) => (
                     <button key={playlist.id} className="flex flex-col w-24 md:w-40 gap-1" onClick={() => navigate(`/${playlist.id}`)}>
                         <img
-                            src={playlist.images[0].url}
+                            src={playlist.images?.[0].url}
                             alt={playlist.name}
                             className="w-full h-24 md:h-40"
                         />

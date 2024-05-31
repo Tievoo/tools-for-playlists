@@ -53,7 +53,7 @@ export const useTopStore = create<TopState>((set) => ({
         medium: new Map<string, number>(),
         short: new Map<string, number>(),
     },
-    canSearch: false,
+    canSearch: true,
     setCanSearch: (canSearch) => set({ canSearch }),
     setArtists: (artists) => set({ artists }),
     setTracks: (tracks) => set({ tracks }),

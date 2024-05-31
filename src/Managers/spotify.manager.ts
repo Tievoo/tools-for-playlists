@@ -2,7 +2,7 @@ import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
 import { AuthState, TopState } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
-export async function get(id: string, state: AuthState, setLoadingName : (n: string) => void): Promise<Playlist> {
+export async function get(id: string, state: AuthState, setLoadingName: (n: string) => void): Promise<Playlist> {
     let aToken = state.token;
     if (!state.token || state.validUntil < Date.now()) {
         aToken = await refreshAuth(state);
@@ -23,7 +23,7 @@ export async function get(id: string, state: AuthState, setLoadingName : (n: str
     const promises = []
     let next = playlist.tracks.next
     while (initialItems < playlist.tracks.total && next) {
-        promises.push(fetch(next, {headers}).then(r => r.json()).then((d) => d.items))
+        promises.push(fetch(next, { headers }).then(r => r.json()).then((d) => d.items))
         initialItems += limit
         next = `https://api.spotify.com/v1/playlists/${id}/tracks?offset=${initialItems}&limit=${limit}`
     }
@@ -47,11 +47,12 @@ export async function me(state: AuthState): Promise<SimplifiedPlaylist[]> {
             Authorization: 'Bearer ' + aToken
         }
     })
-    const playlists : { items: SimplifiedPlaylist[] } = await r.json()
+    const playlists: { items: SimplifiedPlaylist[] } = await r.json()
     return playlists.items
 }
 
 export async function getAllTops(tops: TopState, state: AuthState) {
+    tops.setCanSearch(false)
     if (!state.isUser) return
     let aToken = state.token;
     if (!state.token || state.validUntil < Date.now()) {
@@ -90,17 +91,13 @@ export async function getAllTops(tops: TopState, state: AuthState) {
     data.forEach((d, i) => {
         const type = i < 3 ? "artists" : "tracks"
         const time = i % 3 === 0 ? "long" : i % 3 === 1 ? "medium" : "short"
-        console.log(d)
-        d.items.forEach((items: any) => {
-            console.log(items)
-            items.forEach((item: any, i : number) => {
-                const id = type === "artists" ? item.name : item.artists.map((a: any) => a.name).join(", ")
-                if (type === "artists") {
-                    artists[time].set(id, i+1)
-                } else {
-                    tracks[time].set(id, i+1)
-                }
-            })
+        d.items.forEach((item: any, i: number) => {
+            const id = item.id
+            if (type === "artists") {
+                artists[time].set(id, i + 1)
+            } else {
+                tracks[time].set(id, i + 1)
+            }
         })
     })
 

@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Playlist } from "../../Types/spotify.types";
 import PlaylistComponent from "./Components/Playlist";
 import { useState } from "react";
-import TopArtists from "./Components/TopArtists";
+import TopTen from "./Components/TopTen";
 
 function Detail() {
     const auth = useAuthStore();
@@ -61,7 +61,7 @@ function Detail() {
             >
                 <PlaylistComponent playlist={playlist} />
                 <div className="md:w-1/2 flex flex-col">
-                    <TopArtists playlist={playlist} />
+                    <TopTen playlist={playlist} />
                 </div>
             </div>
         );

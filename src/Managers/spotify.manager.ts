@@ -1,5 +1,5 @@
 import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
-import { AuthState, TopState } from "../store"
+import { AuthState, TopState, UserState } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
 export async function get(id: string, state: AuthState, setLoadingName: (n: string) => void): Promise<Playlist> {
@@ -116,6 +116,24 @@ export function token_with_user(): void {
     window.location.href = url
 }
 
+export async function getUser(state: UserState, auth: AuthState): Promise<void> {
+    let aToken = auth.token;
+    if (!auth.token || auth.validUntil < Date.now()) {
+        aToken = await refreshAuth(auth);
+    }
+
+    const headers = {
+        Authorization: 'Bearer ' + aToken
+    }
+
+    const r = await fetch('https://api.spotify.com/v1/me', {
+        headers
+    })
+
+    const user = await r.json()
+
+    state.setUser(user)
+}
 export async function handleStartAuth(auth: AuthState): Promise<void> {
     const authInfo: Partial<AuthState> = JSON.parse(
         localStorage.getItem("auth") || "{}"

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Playlist } from "./Types/spotify.types";
+import { Playlist, User } from "./Types/spotify.types";
 
 interface MainState {
     playlists: Playlist[];
@@ -30,6 +30,11 @@ export interface TopState {
     setTracks: (tracks: TopState["tracks"]) => void;
 }
 
+export interface UserState {
+    user: User | null;
+    setUser: (user: User | null) => void;
+}
+
 const useStore = create<MainState>((set) => ({
     playlists: [],
     setPlaylists: (playlists) => set({ playlists }),
@@ -58,5 +63,10 @@ export const useTopStore = create<TopState>((set) => ({
     setArtists: (artists) => set({ artists }),
     setTracks: (tracks) => set({ tracks }),
 }));
+
+export const useUserStore = create<UserState>((set) => ({
+    user: null,
+    setUser: (user) => set({ user }),
+}))
 
 export default useStore;

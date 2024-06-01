@@ -42,8 +42,8 @@ export default function PlaylistComponent({ playlist }: Props) {
                                 )
                             }
                         >
-                            <div className="flex flex-row gap-3 items-center justify-start">
-                                <span className="text-sm md:text-basefont-medium text-left md:text-right w-8">
+                            <div className="flex flex-row gap-3 items-center justify-start w-full overflow-hidden">
+                                <span className="text-sm md:text-basefont-medium text-left md:text-right w-6 md:w-8">
                                     {i + 1}.
                                 </span>
                                 <img
@@ -51,9 +51,9 @@ export default function PlaylistComponent({ playlist }: Props) {
                                     src={track?.album?.images?.[0]?.url}
                                     alt=""
                                 />
-                                <div className="flex flex-col items-start">
+                                <div className="flex flex-col items-start w-3/4 overflow-hidden">
                                     <div className="flex flex-row gap-3 items-center">
-                                        <span className="font-medium">
+                                        <span className="font-medium truncate">
                                             {removeFeat(track.name)}
                                         </span>
                                         <TopPill id={track.id} type="tracks" />

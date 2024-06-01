@@ -37,7 +37,7 @@ function Me() {
                 <div className="flex flex-col">
                     <span className="font-spoti text-xl font-semibold">Owned Playlists</span>
                     <span className="w-full h-[2px] bg-gray-300"></span>
-                    <div className="flex flex-row w-full gap-8 md:gap-12 mt-5 pb-3">
+                    <div className="flex flex-row w-full overflow-x-auto scroll-container gap-8 md:gap-12 mt-5 pb-3">
                         {owned.map((playlist) => (
                             <button key={playlist.id} className="flex flex-col w-24 md:w-40 gap-1" onClick={() => navigate(`/${playlist.id}`)}>
                                 <img
@@ -45,7 +45,7 @@ function Me() {
                                     alt={playlist.name}
                                     className="w-full h-24 md:h-40 object-cover"
                                 />
-                                <div className="flex flex-col w-full">
+                                <div className="flex flex-col w-24 md:w-40 ">
                                     <span className="font-spoti font-semibold text-center w-full truncate">{playlist.name}</span>
                                     <span className="text-center text-xs text-gray-400">{playlist.owner.display_name}</span>
                                 </div>

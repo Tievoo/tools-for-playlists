@@ -26,7 +26,6 @@ export default function usePlaylistInput() :[string | null, (value: string | nul
 
     useEffect(() => {
         const path = location.pathname
-        console.log(path.split('/')[1]!)
         if (path.length > 1 && path.split('/')[1] !== "me") {
             setSearch("https://open.spotify.com/playlist/"+window.location.pathname.split('/')[1])
         }

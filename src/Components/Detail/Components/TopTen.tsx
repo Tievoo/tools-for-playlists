@@ -15,12 +15,12 @@ function TopTen({ playlist }: Props) {
     const top = selected === "artists" ? topArtists : topAlbums;
 
     const getPercentageWidth = (percentage: number) => {
-        return percentage/(Math.min(top[0].percentage + 20,  100)) *(isMobile ? 4 :5) + "rem"
+        return percentage/(Math.min(top?.[0].percentage + 20,  100)) *(isMobile ? 4 :5) + "rem"
     }
 
     const textWidth = useMemo(() => {
-        if (!top[0]) return "0rem"
-        const digits = (top[0].percentage || 0).toFixed(0).length
+        if (!top?.[0]) return "0rem"
+        const digits = Math.max((top?.[0].percentage || 0).toFixed(0).length, 2)
         return digits * 0.9 + "rem"
     }, [top[0]])
 

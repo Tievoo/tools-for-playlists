@@ -12,7 +12,7 @@ export async function get(id: string, state: AuthState, setLoadingName: (n: stri
         Authorization: 'Bearer ' + aToken
     }
 
-    const r = await fetch('https://api.spotify.com/v1/playlists/' + id, {
+    const r = await fetch('https://api.spotify.com/v1/playlists/' + id + "", {
         headers
     })
 

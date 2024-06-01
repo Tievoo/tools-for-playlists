@@ -37,7 +37,7 @@ function Me() {
                 <div className="flex flex-col">
                     <span className="font-spoti text-xl font-semibold">Owned Playlists</span>
                     <span className="w-full h-[2px] bg-gray-300"></span>
-                    <div className="flex flex-row w-full gap-8 md:gap-12 flex-wrap mt-5 pb-3">
+                    <div className="flex flex-row w-full gap-8 md:gap-12 mt-5 pb-3">
                         {owned.map((playlist) => (
                             <button key={playlist.id} className="flex flex-col w-24 md:w-40 gap-1" onClick={() => navigate(`/${playlist.id}`)}>
                                 <img

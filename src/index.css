@@ -28,6 +28,10 @@ body {
   background-color: #333;
 }
 
+.bg-gray-main-light {
+  background-color: #444;
+}
+
 .font-spoti {
   font-family: "CircularSpotifyText", system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
@@ -55,13 +59,13 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #444;
+  background: #555;
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #666;
 }
 
 @media (prefers-color-scheme: light) {

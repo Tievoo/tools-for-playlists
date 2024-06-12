@@ -1,16 +1,13 @@
 import { useMemo, useState } from "react";
 import useIsMobile from "../../../Hooks/useIsMobile";
 import useTopN from "../../../Hooks/useTopN";
-import { Playlist } from "../../../Types/spotify.types";
 import TopPill from "./TopPill";
+import { usePlaylistStore } from "../../../store";
 
-interface Props {
-    playlist: Playlist;
-}
-
-function TopTen({ playlist }: Props) {
+function TopTen() {
     const isMobile = useIsMobile();
     const [selected, setSelected] = useState<string>("artists" as "artists" | "albums");
+    const { playlist } = usePlaylistStore();
     const { topArtists, topAlbums } = useTopN(10, playlist);
     const top = selected === "artists" ? topArtists : topAlbums;
 
@@ -39,7 +36,7 @@ function TopTen({ playlist }: Props) {
             <div className="flex flex-col rounded-md bg-gray-main p-4 w-full">
                 <div className="flex flex-row justify-between mb-2">
                     <span className="text-2xl font-bold">Top {10} { selected === "artists" ? "Artists" : "Albums" }</span>
-                    <div className="flex flex-row gap-2 rounded-full bg-gray-main-light gap-2">
+                    <div className="flex flex-row gap-2 rounded-full bg-gray-light">
                         <button
                             onClick={() => setSelected("artists")}
                             className={`rounded-full px-2 font-spoti ${

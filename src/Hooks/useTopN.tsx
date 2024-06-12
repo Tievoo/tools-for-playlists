@@ -8,7 +8,7 @@ export interface TopObject {
     id: string;
 }
 
-export default function useTopN(n: number, playlist?: Playlist) {
+export default function useTopN(n: number, playlist?: Playlist | null) {
     const [topArtists, setTopArtists] = useState<TopObject[]>([]);
     const [topAlbums, setTopAlbums] = useState<TopObject[]>([]);
 

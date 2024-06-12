@@ -65,7 +65,7 @@ export interface Track {
     is_playable?: boolean
 }
 
-export interface Album {
+export interface PlaylistAlbum {
     album_type: string
     artists: Artist[]
     available_markets: string[]
@@ -81,6 +81,10 @@ export interface Album {
     total_tracks: number
     type: string
     uri: string
+}
+
+export interface Album extends PlaylistAlbum {
+    tracks: Page<Track>
 }
 
 export interface AddedBy {

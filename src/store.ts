@@ -35,6 +35,11 @@ export interface UserState {
     setUser: (user: User | null) => void;
 }
 
+export interface PlaylistState {
+    playlist: Playlist | null;
+    setPlaylist: (playlist: Playlist | null) => void;
+}
+
 const useStore = create<MainState>((set) => ({
     playlists: [],
     setPlaylists: (playlists) => set({ playlists }),
@@ -68,5 +73,10 @@ export const useUserStore = create<UserState>((set) => ({
     user: null,
     setUser: (user) => set({ user }),
 }))
+
+export const usePlaylistStore = create<PlaylistState>((set) => ({
+    playlist: null,
+    setPlaylist: (playlist) => set({ playlist }),
+}));
 
 export default useStore;

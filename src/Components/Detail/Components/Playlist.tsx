@@ -1,29 +1,41 @@
 import { useState } from "react";
 import { msFormat } from "../../../Functions/msFormat";
-import { Playlist } from "../../../Types/spotify.types";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 import TopPill from "./TopPill";
 import { removeFeat } from "../../../Functions/removeFeat";
+import { usePlaylistStore } from "../../../store";
+import AlbumSearch from "./AlbumSearch";
 
-interface Props {
-    playlist: Playlist;
-}
-
-export default function PlaylistComponent({ playlist }: Props) {
+export default function PlaylistComponent() {
     const [collapsed, setCollapsed] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const { playlist } = usePlaylistStore();
 
-    return (
-        <div className="flex flex-col rounded-md bg-gray-main p-2 py-4 md:p-4 w-full md:w-1/2" style={{height:collapsed ? "fit-content" : "auto" }}>
+    return playlist && (
+        <div
+            className="flex flex-col rounded-md bg-gray-main p-2 py-4 md:p-4 w-full md:w-1/2"
+            style={{ height: collapsed ? "fit-content" : "auto" }}
+        >
+            <AlbumSearch isOpen={open} onRequestClose={() => setOpen(false)} />
             <div className="flex flex-row justify-between">
                 <span className=" font-bold text-2xl">{playlist.name}</span>
-                <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    className="flex flex-row items-center gap-1"
-                >
-                    {collapsed ? <FaChevronUp /> : <FaChevronDown />}
-                </button>
+                <div className="flex flex-row gap-3">
+                    {!collapsed && (
+                        <button className="bg-spoti text-black p-2 rounded-full font-medium" onClick={() => setOpen(true)}>
+                            <span className="mt-1">Add from album</span>
+                        </button>
+                    )}
+                    <button
+                        onClick={() => setCollapsed(!collapsed)}
+                        className="flex flex-row items-center gap-1"
+                    >
+                        {collapsed ? <FaChevronUp /> : <FaChevronDown />}
+                    </button>
+                </div>
             </div>
-            <span className="text-sm md:text-base text-gray-400">{playlist.description}</span>
+            <span className="text-sm md:text-base text-gray-400">
+                {playlist.description}
+            </span>
             <div
                 className={`flex flex-col overflow-y-auto md:pr-2 gap-1 mt-3 ${
                     collapsed ? "hidden" : ""
@@ -74,5 +86,5 @@ export default function PlaylistComponent({ playlist }: Props) {
                 })}
             </div>
         </div>
-    );
+    )
 }

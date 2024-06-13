@@ -1,7 +1,6 @@
 import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
 import { AuthState, useAuthStore, useMeStore, usePlaylistStore, useTopStore, useUserStore } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
-import { redirect } from "react-router-dom";
 
 export async function get(id: string, setLoadingName: (n: string) => void): Promise<Playlist> {
     const playlistStore = usePlaylistStore.getState()

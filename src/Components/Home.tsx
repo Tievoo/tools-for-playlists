@@ -81,7 +81,7 @@ function Home() {
                     </div>
                 )}
                 <button
-                    className="mr-3 mt-2 p-2 px-3 bg-spoti  rounded-full"
+                    className="mr-3 mt-2 p-2 px-3 bg-spoti-light  rounded-full"
                     onClick={() => {
 						if (isUser) {
 							auth.logout();

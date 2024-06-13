@@ -10,7 +10,9 @@ export default {
         "gray-main": "#333",
         "gray-light": "#444",
         "gray-dark": "#222",
-        "spoti": "#1ed760"
+        "spoti-light": "#1ed760",
+        "spoti-dark": "#1db954",
+        "spoti-black": "#191414",
       }
     },
   },

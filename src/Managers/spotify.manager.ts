@@ -1,8 +1,14 @@
 import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
-import { AuthState, useAuthStore, usePlaylistStore, useTopStore, useUserStore } from "../store"
+import { AuthState, useAuthStore, useMeStore, usePlaylistStore, useTopStore, useUserStore } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
+import { redirect } from "react-router-dom";
 
 export async function get(id: string, setLoadingName: (n: string) => void): Promise<Playlist> {
+    const playlistStore = usePlaylistStore.getState()
+    if (playlistStore.playlist && playlistStore.playlist.id === id) {
+        return playlistStore.playlist
+    }
+
     const headers = await getHeaders()
 
     const r = await fetch('https://api.spotify.com/v1/playlists/' + id + "", {
@@ -24,27 +30,30 @@ export async function get(id: string, setLoadingName: (n: string) => void): Prom
     const responses = await Promise.all(promises)
     const items = responses.flat()
     playlist.tracks.items = playlist.tracks.items.concat(items)
+    // playlistStore.setPlaylist(playlist)
 
     return playlist
 }
 
 export async function me(): Promise<SimplifiedPlaylist[]> {
     const headers = await getHeaders()
+    const { setPlaylists } = useMeStore.getState()
 
     //TODO handle mas de una pág
     const r = await fetch('https://api.spotify.com/v1/me/playlists', {
         headers
-    })
-    const playlists: { items: SimplifiedPlaylist[] } = await r.json()
-    return playlists.items
+    }).then(r => r.json())
+    // const playlists: { items: SimplifiedPlaylist[] } = await r.json()
+    setPlaylists(r.items)
+    return r.items
 }
 
 export async function getAllTops() {
     const { isUser } = useAuthStore.getState()
     const tops = useTopStore.getState()
 
-    tops.setCanSearch(false)
     if (!isUser) return
+    tops.setCanSearch(false)
 
 
     const headers = await getHeaders()
@@ -192,6 +201,22 @@ export async function removeTracks(ids: string[], snapshot_id: string): Promise<
 
     return r.json()
 
+}
+
+export async function createPlaylist(name: string, description: string, isPublic: boolean): Promise<string> {
+    const headers = await getHeaders()
+    const { user } = useUserStore.getState()
+    const { setPlaylist } = usePlaylistStore.getState()
+    
+    const r = await fetch(`https://api.spotify.com/v1/users/${user?.id}/playlists`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ name, description, public: isPublic })
+    }).then(r => r.json())
+
+    setPlaylist(r)
+
+    return r.id
 }
 
 const getHeaders = async () => {

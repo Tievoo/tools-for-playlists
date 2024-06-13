@@ -24,7 +24,7 @@ export default function PlaylistComponent() {
                 <span className=" font-bold text-2xl">{playlist.name}</span>
                 <div className="flex flex-row gap-3">
                     {!collapsed && ownsPlaylist && (
-                        <button className="bg-spoti text-black p-2 rounded-full font-medium" onClick={() => setOpen(true)}>
+                        <button className="bg-spoti-light text-black p-2 rounded-full font-medium" onClick={() => setOpen(true)}>
                             <span className="mt-1">Add from album</span>
                         </button>
                     )}
@@ -39,7 +39,9 @@ export default function PlaylistComponent() {
             <span className="text-sm md:text-base text-gray-400">
                 {playlist.description}
             </span>
-            <div
+            {
+                playlist.tracks.items.length > 0 ? (
+                    <div
                 className={`flex flex-col overflow-y-auto md:pr-2 gap-1 mt-3 ${
                     collapsed ? "hidden" : ""
                 }`}
@@ -88,6 +90,17 @@ export default function PlaylistComponent() {
                     );
                 })}
             </div>
+                ) : (
+                    <div className="h-full self-center flex flex-col items-center justify-center text-center w-2/3">
+                        <span className="font-spoti font-bold text-2xl text-white">There are no tracks in this playlist.</span>
+                        {
+                            user && ownsPlaylist && (
+                                <span className="text-gray-400 text-center">Search for songs on your favourite albums with the "Add from album" button to give your playlist some life!</span>
+                            )
+                        }
+                    </div>
+                )
+            }
         </div>
     )
 }

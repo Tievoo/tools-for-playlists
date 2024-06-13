@@ -13,17 +13,17 @@ function TopPill({ id, type }: Props) {
     return !isMobile  && (
         <>
             {topState.short.has(id) && (
-                <div className="bg-spoti rounded-full text-xs text-black px-1">
+                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
                     #{topState.short.get(id)} last 4 weeks
                 </div>
             )}
             {topState.medium.has(id) && (
-                <div className="bg-spoti rounded-full text-xs text-black px-1">
+                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
                     #{topState.medium.get(id)} last 6 months
                 </div>
             )}
             {topState.long.has(id) && (
-                <div className="bg-spoti rounded-full text-xs text-black px-1">
+                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
                     #{topState.long.get(id)} last 12 months
                 </div>
             )}

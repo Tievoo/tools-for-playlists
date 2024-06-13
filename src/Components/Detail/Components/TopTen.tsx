@@ -40,7 +40,7 @@ function TopTen() {
                         <button
                             onClick={() => setSelected("artists")}
                             className={`rounded-full px-2 font-spoti ${
-                                selected === "artists" ? "bg-spoti text-black font-semibold" : ""
+                                selected === "artists" ? "bg-spoti-light text-black font-semibold" : ""
                             }`}
                         >
                             Artists
@@ -48,7 +48,7 @@ function TopTen() {
                         <button
                             onClick={() => setSelected("albums")}
                             className={`rounded-full px-2 font-spoti ${
-                                selected === "albums" ? "bg-spoti text-black font-semibold" : ""
+                                selected === "albums" ? "bg-spoti-light text-black font-semibold" : ""
                             }`}
                         >
                             Albums

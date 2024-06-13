@@ -27,6 +27,7 @@ body {
 .font-spoti {
     font-family: "CircularSpotifyText", system-ui, Avenir, Helvetica, Arial,
         sans-serif;
+    /* margin-top: .5rem; */
 }
 
 /* width */

@@ -13,6 +13,24 @@ interface Props {
     onRequestClose: () => void;
 }
 
+const customStyles = {
+    content: {
+        top: "50%",
+        left: "50%",
+        right: "auto",
+        bottom: "auto",
+        width: "40%",
+        maxHeight: "85%",
+        transform: "translate(-50%, -50%)",
+        padding: "0",
+        border: "none",
+        background: "none",
+    },
+    overlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+};
+
 function AlbumSearch({ isOpen, onRequestClose }: Props) {
     const [search, setSearch] = useState<string>("");
     const { results, loading: searchLoading } = useSearch<Album>(search, "album");
@@ -32,25 +50,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
     const { album, checks, change, modified, changeAll, allChecked, undoChanges, save } =
         useAlbum(selectedId, close);
 
-    const customStyles = {
-        content: {
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            width: "40%",
-            // height: album ? "80%" : "30%",
-            maxHeight: "85%",
-            transform: "translate(-50%, -50%)",
-            padding: "0",
-            border: "none",
-            background: "none",
-            // minHeight: "30rem"
-        },
-        overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-        },
-    };
+
 
     return (
         <Modal

@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { Playlist, User } from "./Types/spotify.types";
+import { Playlist, SimplifiedPlaylist, User } from "./Types/spotify.types";
 
-interface MainState {
-    playlists: Playlist[];
-    setPlaylists: (playlists: Playlist[]) => void;
+interface MeState {
+    playlists: SimplifiedPlaylist[];
+    setPlaylists: (playlists: SimplifiedPlaylist[]) => void;
 }
 
 export interface AuthState {
@@ -41,7 +41,7 @@ export interface PlaylistState {
     setPlaylist: (playlist: Playlist | null) => void;
 }
 
-const useStore = create<MainState>((set) => ({
+export const useMeStore = create<MeState>((set) => ({
     playlists: [],
     setPlaylists: (playlists) => set({ playlists }),
 }));
@@ -84,5 +84,3 @@ export const usePlaylistStore = create<PlaylistState>((set) => ({
     playlist: null,
     setPlaylist: (playlist) => set({ playlist }),
 }));
-
-export default useStore;

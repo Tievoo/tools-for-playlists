@@ -11,7 +11,7 @@ function Me() {
     const user = useUserStore();
     const navigate = useNavigate();
     const { playlists } = useMeStore();
-    const { data, fetchStatus } = useQuery<SimplifiedPlaylist[]>({
+    const { fetchStatus } = useQuery<SimplifiedPlaylist[]>({
         queryKey: ["me"],
         queryFn: me,
     });

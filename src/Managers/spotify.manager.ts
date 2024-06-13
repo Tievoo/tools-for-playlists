@@ -3,7 +3,7 @@ import { AuthState, useAuthStore, usePlaylistStore, useTopStore, useUserStore } 
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
 export async function get(id: string, setLoadingName: (n: string) => void): Promise<Playlist> {
-    const headers = await getHeaders("getPlaylist")
+    const headers = await getHeaders()
 
     const r = await fetch('https://api.spotify.com/v1/playlists/' + id + "", {
         headers
@@ -134,7 +134,6 @@ export async function handleStartAuth(): Promise<void> {
         //     token_with_user()
         //     return 
         // }
-        alert("refreshed from handleStartAuth")
         await refreshAuth()
     }
 }
@@ -195,7 +194,7 @@ export async function removeTracks(ids: string[], snapshot_id: string): Promise<
 
 }
 
-const getHeaders = async (prov?: string) => {
+const getHeaders = async () => {
     const { token, validUntil } = useAuthStore.getState()
 
     let aToken = token;
@@ -211,7 +210,6 @@ const getHeaders = async (prov?: string) => {
     }
 
     if (aValidUntil < Date.now()) {
-        alert(`refreshed from getHeaders ${prov}`)
         aToken = await refreshAuth();
     }
 

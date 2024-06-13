@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { msFormat } from "../../../Functions/msFormat";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 import TopPill from "./TopPill";
@@ -13,6 +13,10 @@ export default function PlaylistComponent() {
     const { user } = useUserStore();
 
     const ownsPlaylist = useMemo(() => user?.id === playlist?.owner?.id, [user, playlist])
+
+    useEffect(() => {
+        console.log(ownsPlaylist)
+    }, [playlist]);
 
     return playlist && (
         <div

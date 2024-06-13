@@ -6,10 +6,10 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import NewPlaylist from "./NewPlaylist";
+import { IoMdMusicalNotes } from "react-icons/io";
 
 function Me() {
     const user = useUserStore();
-    const navigate = useNavigate();
     const { playlists } = useMeStore();
     const { fetchStatus } = useQuery<SimplifiedPlaylist[]>({
         queryKey: ["me"],
@@ -50,33 +50,13 @@ function Me() {
                     <span className="w-full h-[2px] bg-gray-300"></span>
                     <div className="flex flex-row w-full overflow-x-auto scroll-container gap-8 md:gap-12 mt-5 pb-3">
                         {owned.map((playlist) => (
-                            <button
-                                key={playlist.id}
-                                className="flex flex-col w-24 md:w-40 gap-1"
-                                onClick={() => navigate(`/${playlist.id}`)}
-                            >
-                                <img
-                                    src={playlist.images?.[0].url}
-                                    alt={playlist.name}
-                                    className="w-full h-24 md:h-40 object-cover"
-                                />
-                                <div className="flex flex-col w-24 md:w-40 ">
-                                    <span className="font-spoti font-semibold text-center w-full truncate">
-                                        {playlist.name}
-                                    </span>
-                                    <span className="text-center text-xs text-gray-400">
-                                        {playlist.owner.display_name}
-                                    </span>
-                                </div>
-                            </button>
+                            <PlaylistComponent playlist={playlist} />
                         ))}
                         <button
                             className="flex flex-col w-24 md:w-40 gap-1"
                             onClick={() => setNewOpen(true)}
                         >
-                            {/* <div className="rounded-md"> */}
                             <FaPlus className="w-24 h-24 md:w-40 md:h-40 bg-gray-light text-gray-dark rounded-md" />
-                            {/* </div> */}
                             <span className="font-spoti font-semibold text-center w-full">
                                 Create a playlist
                             </span>
@@ -91,25 +71,7 @@ function Me() {
                     <span className="w-full h-[2px] bg-gray-300"></span>
                     <div className="flex flex-row w-full overflow-x-auto scroll-container gap-8 md:gap-12 mt-5 pb-3">
                         {notOwned.map((playlist) => (
-                            <button
-                                key={playlist.id}
-                                className="flex flex-col w-24 md:w-40 gap-1"
-                                onClick={() => navigate(`/${playlist.id}`)}
-                            >
-                                <img
-                                    src={playlist.images?.[0].url}
-                                    alt={playlist.name}
-                                    className="w-full h-24 md:h-40 object-cover"
-                                />
-                                <div className="flex flex-col w-24 md:w-40">
-                                    <span className="font-spoti font-semibold text-center w-full truncate">
-                                        {playlist.name}
-                                    </span>
-                                    <span className="text-center text-xs text-gray-400">
-                                        {playlist.owner.display_name}
-                                    </span>
-                                </div>
-                            </button>
+                            <PlaylistComponent playlist={playlist} />
                         ))}
                     </div>
                 </div>
@@ -118,6 +80,38 @@ function Me() {
     }
 
     return null;
+}
+
+function PlaylistComponent({ playlist }: { playlist: SimplifiedPlaylist }) {
+    const navigate = useNavigate();
+
+    return (
+        <button
+            key={playlist.id}
+            className="flex flex-col w-24 md:w-40 gap-1"
+            onClick={() => navigate(`/${playlist.id}`)}
+        >
+            {playlist.images?.length ? (
+                <img
+                    src={playlist.images?.[0].url}
+                    alt={playlist.name}
+                    className="w-full h-24 md:h-40 object-cover"
+                />
+            ) : (
+                <div className="w-full h-24 md:h-40 bg-gray-light flex items-center justify-center">
+                    <IoMdMusicalNotes className="w-8 h-8 md:w-16 md:h-16 text-gray-dark" />
+                </div>
+            )}
+            <div className="flex flex-col w-24 md:w-40">
+                <span className="font-spoti font-semibold text-center w-full truncate">
+                    {playlist.name}
+                </span>
+                <span className="text-center text-xs text-gray-400">
+                    {playlist.owner.display_name}
+                </span>
+            </div>
+        </button>
+    );
 }
 
 export default Me;

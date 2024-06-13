@@ -1,16 +1,9 @@
 import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
-import { AuthState, TopState, UserState } from "../store"
+import { AuthState, useAuthStore, usePlaylistStore, useTopStore, useUserStore } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
-export async function get(id: string, state: AuthState, setLoadingName: (n: string) => void): Promise<Playlist> {
-    let aToken = state.token;
-    if (!state.token || state.validUntil < Date.now()) {
-        aToken = await refreshAuth(state);
-    }
-
-    const headers = {
-        Authorization: 'Bearer ' + aToken
-    }
+export async function get(id: string, setLoadingName: (n: string) => void): Promise<Playlist> {
+    const headers = await getHeaders("getPlaylist")
 
     const r = await fetch('https://api.spotify.com/v1/playlists/' + id + "", {
         headers
@@ -35,33 +28,26 @@ export async function get(id: string, state: AuthState, setLoadingName: (n: stri
     return playlist
 }
 
-export async function me(state: AuthState): Promise<SimplifiedPlaylist[]> {
-    let aToken = state.token;
-    if (!state.token || state.validUntil < Date.now()) {
-        aToken = await refreshAuth(state);
-    }
+export async function me(): Promise<SimplifiedPlaylist[]> {
+    const headers = await getHeaders()
 
     //TODO handle mas de una pág
     const r = await fetch('https://api.spotify.com/v1/me/playlists', {
-        headers: {
-            Authorization: 'Bearer ' + aToken
-        }
+        headers
     })
     const playlists: { items: SimplifiedPlaylist[] } = await r.json()
     return playlists.items
 }
 
-export async function getAllTops(tops: TopState, state: AuthState) {
-    tops.setCanSearch(false)
-    if (!state.isUser) return
-    let aToken = state.token;
-    if (!state.token || state.validUntil < Date.now()) {
-        aToken = await refreshAuth(state);
-    }
+export async function getAllTops() {
+    const { isUser } = useAuthStore.getState()
+    const tops = useTopStore.getState()
 
-    const headers = {
-        Authorization: 'Bearer ' + aToken
-    }
+    tops.setCanSearch(false)
+    if (!isUser) return
+
+
+    const headers = await getHeaders()
 
     const fetchV = (type: string, time: string) => fetch(`https://api.spotify.com/v1/me/top/${type}?time_range=${time}&limit=50`, { headers })
 
@@ -101,12 +87,12 @@ export async function getAllTops(tops: TopState, state: AuthState) {
         })
     })
 
-    console.log(artists)
     tops.setArtists(artists)
     tops.setTracks(tracks)
 }
 
 export async function token_no_user(): Promise<string> {
+    alert("token_no_user")
     const t = await fetch("https://tfp-no-user-auth.tievolib8216.workers.dev/")
     return t.text()
 }
@@ -116,15 +102,10 @@ export function token_with_user(): void {
     window.location.href = url
 }
 
-export async function getUser(state: UserState, auth: AuthState): Promise<void> {
-    let aToken = auth.token;
-    if (!auth.token || auth.validUntil < Date.now()) {
-        aToken = await refreshAuth(auth);
-    }
+export async function getUser(): Promise<void> {
+    const state = useUserStore.getState()
 
-    const headers = {
-        Authorization: 'Bearer ' + aToken
-    }
+    const headers = await getHeaders()
 
     const r = await fetch('https://api.spotify.com/v1/me', {
         headers
@@ -134,7 +115,10 @@ export async function getUser(state: UserState, auth: AuthState): Promise<void> 
 
     state.setUser(user)
 }
-export async function handleStartAuth(auth: AuthState): Promise<void> {
+
+export async function handleStartAuth(): Promise<void> {
+    const auth = useAuthStore.getState()
+
     const authInfo: Partial<AuthState> = JSON.parse(
         localStorage.getItem("auth") || "{}"
     );
@@ -150,12 +134,18 @@ export async function handleStartAuth(auth: AuthState): Promise<void> {
         //     token_with_user()
         //     return 
         // }
-
-        await refreshAuth(auth)
+        alert("refreshed from handleStartAuth")
+        await refreshAuth()
     }
 }
 
-export async function refreshAuth(auth: AuthState) {
+export async function refreshAuth() {
+    let auth = useAuthStore.getState()
+
+    if (auth.token.length === 0) {
+        auth = JSON.parse(localStorage.getItem("auth") || "{}")
+    }
+
     if (auth.isUser) {
         token_with_user()
         return ""
@@ -173,4 +163,59 @@ export async function refreshAuth(auth: AuthState) {
         JSON.stringify(newAuth)
     );
     return token;
+}
+
+export async function addTracks(ids: string[]): Promise<{ snapshot_id: string }> {
+    const headers = await getHeaders()
+    const { playlist } = usePlaylistStore.getState()
+
+    const uris = ids.map(id => `spotify:track:${id}`).join(',')
+
+    const r = await fetch(`https://api.spotify.com/v1/playlists/${playlist?.id}/tracks?uris=${encodeURIComponent(uris)}`, {
+        method: 'POST',
+        headers,
+    })
+
+    return r.json()
+}
+
+export async function removeTracks(ids: string[], snapshot_id: string): Promise<{ snapshot_id: string }> {
+    const headers = await getHeaders()
+    const { playlist } = usePlaylistStore.getState()
+
+    const r = await fetch(`https://api.spotify.com/v1/playlists/${playlist?.id}/tracks`, {
+        method: 'DELETE',
+        headers,
+        body: JSON.stringify({ 
+            tracks: ids.map(id => ({ uri: `spotify:track:${id}`, snapshot_id })) 
+        })
+    })
+
+    return r.json()
+
+}
+
+const getHeaders = async (prov?: string) => {
+    const { token, validUntil } = useAuthStore.getState()
+
+    let aToken = token;
+    let aValidUntil = validUntil;
+
+    if (!token.length) {
+        const auth = localStorage.getItem("auth")
+        if (auth) {
+            const { token, validUntil } = JSON.parse(auth)
+            aToken = token
+            aValidUntil = validUntil
+        }
+    }
+
+    if (aValidUntil < Date.now()) {
+        alert(`refreshed from getHeaders ${prov}`)
+        aToken = await refreshAuth();
+    }
+
+    return {
+        Authorization: 'Bearer ' + aToken
+    }
 }

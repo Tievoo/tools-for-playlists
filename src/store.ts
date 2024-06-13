@@ -11,6 +11,7 @@ export interface AuthState {
     validUntil: number;
     isUser: boolean;
     setToken: ({token, validUntil, isUser} : Partial<AuthState>) => void;
+    logout: () => void;
 }
 
 export interface TopState {
@@ -50,6 +51,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     validUntil: 0,
     isUser: false,
     setToken: ({token, validUntil, isUser} : Partial<AuthState>) => set({ token, validUntil, isUser }),
+    logout: () => {
+        console.log("logout");
+        set({ token: "", validUntil: 0, isUser: false });
+        localStorage.removeItem("auth");
+    },
 }));
 
 export const useTopStore = create<TopState>((set) => ({

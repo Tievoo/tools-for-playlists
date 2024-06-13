@@ -7,7 +7,7 @@ export function generateLoginUrl() {
     const state = generateRandomString(16);
 
     localStorage.setItem("login-state", state);
-    const scope = 'user-read-private user-read-email playlist-read-private user-top-read';
+    const scope = 'user-read-private user-read-email playlist-read-private user-top-read playlist-modify-public playlist-modify-private';
 
     let url = 'https://accounts.spotify.com/authorize';
     url += '?response_type=token';

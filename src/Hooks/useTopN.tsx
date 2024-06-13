@@ -28,7 +28,7 @@ export default function useTopN(n: number, playlist?: Playlist | null) {
 
             if (item?.track?.album) {
                 const album = item.track.album;
-                if (album.album_type === "single") continue;
+                if (album.total_tracks < 1) continue;
                 if (albums[album.id]) {
                     albums[album.id].count++;
                 } else {

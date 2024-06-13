@@ -29,14 +29,6 @@ body {
         sans-serif;
 }
 
-.text-spoti {
-    color: #1ed760;
-}
-
-.bg-spoti {
-    background-color: #1ed760;
-}
-
 /* width */
 ::-webkit-scrollbar {
     width: 10px;

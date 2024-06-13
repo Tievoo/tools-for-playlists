@@ -1,31 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { SimplifiedPlaylist } from "../../Types/spotify.types";
-import { useAuthStore, useTopStore, useUserStore } from "../../store";
-import { getAllTops, getUser, me } from "../../Managers/spotify.manager";
-import { useEffect, useMemo } from "react";
+import { useUserStore } from "../../store";
+import { me } from "../../Managers/spotify.manager";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Me() {
-    const auth = useAuthStore();
     const user = useUserStore();
-    const top = useTopStore();
     const navigate = useNavigate();
     const { data, fetchStatus } = useQuery<SimplifiedPlaylist[]>({
         queryKey: ["me"],
-        queryFn: async () => me(auth.token.length > 0 ? auth : JSON.parse(localStorage.getItem("auth") || "{}")),
+        queryFn: me,
     });
 
     const owned = useMemo(() => data?.filter((playlist) => playlist.owner.id === user.user?.id) || [], [data, user.user]);
     const notOwned = useMemo(() => data?.filter((playlist) => playlist.owner.id !== user.user?.id) || [], [data, user.user]);
-
-    useEffect(() => {
-        if (auth.token.length && !auth.isUser) {
-            window.location.href = "/";
-        } else if (auth.token.length && auth.isUser) {
-            getUser(user, auth);
-            if (top.canSearch) getAllTops(top, auth);
-        }
-    }, [auth]);
 
     if (fetchStatus === "fetching") {
         return <>Loading...</>;

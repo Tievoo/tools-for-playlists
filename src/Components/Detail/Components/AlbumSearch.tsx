@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { usePlaylistStore } from "../../../store";
 import Modal from "react-modal";
 import useSearch from "../../../Hooks/useSearch";
 import { Album } from "../../../Types/spotify.types";
@@ -7,6 +6,7 @@ import useClickOutside from "../../../Hooks/useClickOutside";
 import useAlbum from "../../../Hooks/useAlbum";
 import { FaXmark } from "react-icons/fa6";
 import { msFormat } from "../../../Functions/msFormat";
+import Checkbox from "../../Checkbox";
 
 interface Props {
     isOpen: boolean;
@@ -14,15 +14,23 @@ interface Props {
 }
 
 function AlbumSearch({ isOpen, onRequestClose }: Props) {
-    const { setPlaylist } = usePlaylistStore();
     const [search, setSearch] = useState<string>("");
-    const { results, loading } = useSearch<Album>(search, "album");
+    const { results, loading: searchLoading } = useSearch<Album>(search, "album");
     const mainRef = useRef<HTMLDivElement>(null);
     const [focus, setFocus] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
-    const { album } = useAlbum(selectedId);
+    
 
     useClickOutside(mainRef, mainRef, () => setFocus(false));
+
+    const close = () => {
+        setSearch("");
+        setSelectedId(null);
+        onRequestClose();
+    }
+
+    const { album, checks, change, modified, changeAll, allChecked, undoChanges, save } =
+        useAlbum(selectedId, close);
 
     const customStyles = {
         content: {
@@ -31,8 +39,8 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
             right: "auto",
             bottom: "auto",
             width: "40%",
-            height: album ? "70%" : "30%",
-            maxHeight: "80%",
+            // height: album ? "80%" : "30%",
+            maxHeight: "85%",
             transform: "translate(-50%, -50%)",
             padding: "0",
             border: "none",
@@ -48,7 +56,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
         <Modal
             style={customStyles}
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
+            onRequestClose={close}
         >
             <div
                 className="flex flex-col bg-gray-main p-4 items-stretch gap-3 h-full"
@@ -57,7 +65,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                 <span className="font-bold text-xl font-spoti">
                     Search for Album
                 </span>
-                <div className="flex flex-col relative" ref={mainRef}>
+                <div className="flex flex-col" ref={mainRef}>
                     <div className=" flex relative w-full">
                         <input
                             type="text"
@@ -68,16 +76,24 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                             onFocus={() => setFocus(true)}
                         />
                         {album && (
-                            <button onClick={() => setSelectedId(null)}>
+                            <button
+                                onClick={() => {
+                                    setSelectedId(null);
+                                    setSearch("");
+                                }}
+                            >
                                 <FaXmark className="absolute right-1 top-1" />
                             </button>
                         )}
                     </div>
 
-                    <div className="flex flex-col overflow-y-auto h-36 absolute top-5 w-full mt-2 rounded">
-                        {focus &&
-                            results
-                                .filter((a) => a.album_type === "album")
+                    {focus && (
+                        <div className="flex flex-col overflow-y-auto max-h-36 top-5 w-full mt-2 rounded">
+                            {
+                                searchLoading && results.length === 0 && <span className="text-center py-5 bg-gray-dark">Loading...</span>
+                            }
+                            {results
+                                .filter((a) => a.total_tracks > 1)
                                 .map((album) => (
                                     <button
                                         key={album.id}
@@ -105,11 +121,12 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                                         </div>
                                     </button>
                                 ))}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {album && (
-                    <div className="flex flex-col gap-3 h-5/6">
+                    <div className="flex flex-col gap-3">
                         <div className="flex flex-row gap-3">
                             <img
                                 src={album.images?.at(0)?.url}
@@ -127,22 +144,39 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                                 </span>
                             </div>
                         </div>
-                        <div className="flex flex-col overflow-y-scroll h-3/4">
-                            {album.tracks.items.map((track, i) => (
-                                <button
+                        <div className="flex flex-row gap-1 font-spoti font-medium items-center">
+                            <Checkbox checked={allChecked} onChange={changeAll} />
+                            <span className="mt-2">Select All</span>
+                        </div>
+                        <div className="flex flex-col overflow-y-scroll flex-1 max-h-96">
+                            {album.tracks.items.map((track) => (
+                                <div
                                     key={track.id}
                                     className="flex flex-row items-center justify-between w-full gap-3 bg-gray-dark p-2 font-spoti hover:bg-gray-light transition-colors"
-                                >   
-                                <label className="custom-checkbox">
-                                    <input type="checkbox" />
-                                    <span className="checkmark"></span>
-                                </label>
+                                >
+                                    <Checkbox checked={checks.get(track.id) || false} onChange={() => change(track.id)} />
                                     <div className="flex flex-row gap-2">
                                         <span>{track.name}</span>
                                     </div>
                                     <span>{msFormat(track.duration_ms)}</span>
-                                </button>
+                                </div>
                             ))}
+                        </div>
+                        <div className="flex flex-row gap-2 w-full">
+                            <button
+                                className="bg-green-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
+                                onClick={undoChanges}
+                                disabled={!modified}
+                            >
+                                Undo
+                            </button>
+                            <button
+                                className="bg-green-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
+                                onClick={save}
+                                disabled={!modified}
+                            >
+                                {modified ? "Save" : "Saved"}
+                            </button>
                         </div>
                     </div>
                 )}

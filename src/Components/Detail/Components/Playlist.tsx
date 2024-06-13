@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { msFormat } from "../../../Functions/msFormat";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 import TopPill from "./TopPill";
 import { removeFeat } from "../../../Functions/removeFeat";
-import { usePlaylistStore } from "../../../store";
+import { usePlaylistStore, useUserStore } from "../../../store";
 import AlbumSearch from "./AlbumSearch";
 
 export default function PlaylistComponent() {
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const { playlist } = usePlaylistStore();
+    const { user } = useUserStore();
+
+    const ownsPlaylist = useMemo(() => user?.id === playlist?.owner?.id, [user, playlist])
 
     return playlist && (
         <div
@@ -20,7 +23,7 @@ export default function PlaylistComponent() {
             <div className="flex flex-row justify-between">
                 <span className=" font-bold text-2xl">{playlist.name}</span>
                 <div className="flex flex-row gap-3">
-                    {!collapsed && (
+                    {!collapsed && ownsPlaylist && (
                         <button className="bg-spoti text-black p-2 rounded-full font-medium" onClick={() => setOpen(true)}>
                             <span className="mt-1">Add from album</span>
                         </button>

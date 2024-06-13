@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore, usePlaylistStore } from "../../store";
+import { usePlaylistStore } from "../../store";
 import { get } from "../../Managers/spotify.manager";
 import { useParams } from "react-router-dom";
 import { Playlist } from "../../Types/spotify.types";
@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import TopTen from "./Components/TopTen";
 
 function Detail() {
-    const auth = useAuthStore();
     const { setPlaylist } = usePlaylistStore();
     const { id } = useParams();
     const [loadingName, setLoadingName] = useState<string | null>(null);
@@ -22,7 +21,6 @@ function Detail() {
         queryFn: async () =>
             get(
                 id || "",
-                auth || JSON.parse(localStorage.getItem("auth") || "{}"),
                 setLoadingName
             ),
     });

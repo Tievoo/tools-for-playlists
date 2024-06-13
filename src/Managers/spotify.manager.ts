@@ -100,7 +100,6 @@ export async function getAllTops() {
 }
 
 export async function token_no_user(): Promise<string> {
-    alert("token_no_user")
     const t = await fetch("https://tfp-no-user-auth.tievolib8216.workers.dev/")
     return t.text()
 }
@@ -146,14 +145,16 @@ export async function handleStartAuth(): Promise<void> {
     }
 }
 
-export async function refreshAuth() {
-    let auth = useAuthStore.getState()
-
+export async function refreshAuth(): Promise<string> {
+    const auth = useAuthStore.getState()
+    let { isUser } = auth
+    
     if (auth.token.length === 0) {
-        auth = JSON.parse(localStorage.getItem("auth") || "{}")
+        const ls_auth = JSON.parse(localStorage.getItem("auth") || "{}")
+        isUser = ls_auth.isUser
     }
 
-    if (auth.isUser) {
+    if (isUser) {
         token_with_user()
         return ""
     }
@@ -219,7 +220,8 @@ export async function createPlaylist(name: string, description: string, isPublic
 }
 
 const getHeaders = async () => {
-    const { token, validUntil } = useAuthStore.getState()
+    const auth = useAuthStore.getState()
+    const { token, validUntil } = auth
 
     let aToken = token;
     let aValidUntil = validUntil;

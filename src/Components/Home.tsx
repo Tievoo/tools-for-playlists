@@ -47,8 +47,8 @@ function Home() {
             }
         }
 
-        if (token.length && !isUser) {
-            window.location.href = "/";
+        if (token.length && !isUser && window.location.pathname !== "/" ) {
+            navigate("/");
         } else if (token.length && isUser) {
             getUser();
             if (top.canSearch) getAllTops();
@@ -85,6 +85,8 @@ function Home() {
                     onClick={() => {
 						if (isUser) {
 							auth.logout();
+                            user.setUser(null);
+                            navigate("/");
 						} else {
 							window.location.href = generateLoginUrl();
 						}

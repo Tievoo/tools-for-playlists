@@ -30,7 +30,6 @@ function useSearch<K extends  Album | Playlist | Track>(search: string, type: "a
                         setLoading(false);
                         setResults(data[type + "s"].items)
                         console.log(data.tracks.items);
-                        alert("loading should be false")
 
                         
                     });

@@ -13,18 +13,18 @@ function TopPill({ id, type }: Props) {
     return !isMobile  && (
         <>
             {topState.short.has(id) && (
-                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
-                    #{topState.short.get(id)} last 4 weeks
+                <div className=" flex gap-1 bg-spoti-light rounded-full text-xs text-black px-2">
+                    #{topState.short.get(id)} <span className="hidden 2xl:flex">last 4 weeks</span>
                 </div>
             )}
             {topState.medium.has(id) && (
-                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
-                    #{topState.medium.get(id)} last 6 months
+                <div className="flex gap-1 bg-spoti-dark rounded-full text-xs text-black px-2">
+                    #{topState.medium.get(id)} <span className="hidden 2xl:flex">last 6 months</span>
                 </div>
             )}
             {topState.long.has(id) && (
-                <div className="bg-spoti-light rounded-full text-xs text-black px-1">
-                    #{topState.long.get(id)} last 12 months
+                <div className="flex gap-1 bg-green-800 rounded-full text-xs text-white px-2">
+                    #{topState.long.get(id)} <span className="hidden 2xl:flex">last 12 months</span>
                 </div>
             )}
         </>

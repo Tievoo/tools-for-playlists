@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Playlist, SimplifiedPlaylist, User } from "./Types/spotify.types";
+import { Playlist, SimplifiedPlaylist, Track, User } from "./Types/spotify.types";
 
 interface MeState {
     playlists: SimplifiedPlaylist[];
@@ -10,7 +10,7 @@ export interface AuthState {
     token: string;
     validUntil: number;
     isUser: boolean;
-    setToken: ({token, validUntil, isUser} : Partial<AuthState>) => void;
+    setToken: ({ token, validUntil, isUser }: Partial<AuthState>) => void;
     logout: () => void;
 }
 
@@ -39,6 +39,7 @@ export interface UserState {
 export interface PlaylistState {
     playlist: Playlist | null;
     setPlaylist: (playlist: Playlist | null) => void;
+    addToPlaylist: (tracks: Track[]) => void;
 }
 
 export const useMeStore = create<MeState>((set) => ({
@@ -50,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     token: "",
     validUntil: 0,
     isUser: false,
-    setToken: ({token, validUntil, isUser} : Partial<AuthState>) => set({ token, validUntil, isUser }),
+    setToken: ({ token, validUntil, isUser }: Partial<AuthState>) => set({ token, validUntil, isUser }),
     logout: () => {
         console.log("logout");
         set({ token: "", validUntil: 0, isUser: false });
@@ -83,4 +84,29 @@ export const useUserStore = create<UserState>((set) => ({
 export const usePlaylistStore = create<PlaylistState>((set) => ({
     playlist: null,
     setPlaylist: (playlist) => set({ playlist }),
+    addToPlaylist: (tracks) => set((state) => {
+        if (!state.playlist) return state;
+        const playlistedTracks = tracks.map((track) => ({
+            added_at: new Date().toISOString(),
+            added_by: {
+                external_urls: { spotify: "" },
+                href: "",
+                id: "",
+                type: "user",
+                uri: ""
+            },
+            is_local: false,
+            primary_color: "",
+            track
+        }));
+        return {
+            playlist: {
+                ...state.playlist,
+                tracks: {
+                    ...state.playlist.tracks,
+                    items: [...state.playlist?.tracks.items, ...playlistedTracks],
+                },
+            },
+        };
+    })
 }));

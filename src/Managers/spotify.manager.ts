@@ -1,4 +1,4 @@
-import { Playlist, SimplifiedPlaylist } from "../Types/spotify.types"
+import { Playlist, SimplifiedPlaylist, Track } from "../Types/spotify.types"
 import { AuthState, useAuthStore, useMeStore, usePlaylistStore, useTopStore, useUserStore } from "../store"
 import { generateLoginUrl } from "../Functions/generateLoginUrl";
 
@@ -217,6 +217,28 @@ export async function createPlaylist(name: string, description: string, isPublic
     setPlaylist(r)
 
     return r.id
+}
+
+export async function updatePlaylist(name: string, description: string, isPublic: boolean, id: string): Promise<void> {
+    const headers = await getHeaders()
+
+    await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ name, description, public: isPublic })
+    })
+
+    return
+}
+
+export async function getRecommendations(tracks: string) : Promise<Track[]> {
+    const headers = await getHeaders()
+
+    const r = await fetch(`https://api.spotify.com/v1/recommendations?limit=10&seed_tracks=${tracks}`, {
+        headers
+    }).then(r => r.json())
+
+    return r.tracks
 }
 
 const getHeaders = async () => {

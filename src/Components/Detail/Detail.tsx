@@ -6,6 +6,7 @@ import { Playlist } from "../../Types/spotify.types";
 import PlaylistComponent from "./Components/Playlist";
 import { useEffect, useState } from "react";
 import TopTen from "./Components/TopTen";
+import Recommendations from "./Components/Recommendations";
 
 function Detail() {
     const { setPlaylist } = usePlaylistStore();
@@ -79,8 +80,9 @@ function Detail() {
             >
                 
                 <PlaylistComponent />
-                <div className="md:w-1/2 flex flex-col">
+                <div className="md:w-1/2 flex flex-col gap-5">
                     <TopTen />
+                    <Recommendations />
                 </div>
             </div>
         );

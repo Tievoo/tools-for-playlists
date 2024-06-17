@@ -5,7 +5,7 @@ import { me } from "../../Managers/spotify.manager";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import NewPlaylist from "./NewPlaylist";
+import PlaylistDetails from "./PlaylistDetails";
 import { IoMdMusicalNotes } from "react-icons/io";
 
 function Me() {
@@ -39,7 +39,7 @@ function Me() {
     if (playlists && playlists.length && user.user) {
         return (
             <div className="flex flex-col gap-8 px-5 md:px-20 w-full my-12 md:my-20">
-                <NewPlaylist
+                <PlaylistDetails
                     isOpen={newOpen}
                     onRequestClose={() => setNewOpen(false)}
                 />

@@ -14,7 +14,6 @@ interface Props {
         description?: string;
         isPublic?: boolean;
     };
-    duplicate?: boolean;
 }
 
 const customStyles = {
@@ -35,7 +34,7 @@ const customStyles = {
     },
 };
 
-function PlaylistDetails({ isOpen, onRequestClose, prev, duplicate = false }: Props) {
+function PlaylistDetails({ isOpen, onRequestClose, prev }: Props) {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>(
         ""
@@ -56,13 +55,11 @@ function PlaylistDetails({ isOpen, onRequestClose, prev, duplicate = false }: Pr
     const save = async () => {
         if (loading) return;
         setLoading(true);
-        if (prev && prev.id && !duplicate){
+        if (prev && prev.id){
             await updatePlaylist(name, description, isPublic, prev.id).then(() =>{
                 if (playlist) setPlaylist({ ...playlist, name, description, public: isPublic });
                 close();
             });
-        } else if (duplicate) {
-            // duplicate playlist
         } else {
             await createPlaylist(name, description, isPublic).then((id) =>
                 navigate(`/${id}`)
@@ -75,7 +72,7 @@ function PlaylistDetails({ isOpen, onRequestClose, prev, duplicate = false }: Pr
         if (prev && prev.id) {
             if (prev.name) setName(prev.name);
             if (prev.description) setDescription(prev.description);
-            if (prev.isPublic) setIsPublic(prev.isPublic);
+            if (prev.isPublic !== undefined) setIsPublic(prev.isPublic);
         }
     }, [isOpen, prev]);
 

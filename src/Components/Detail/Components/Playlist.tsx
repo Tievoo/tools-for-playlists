@@ -7,12 +7,14 @@ import { usePlaylistStore, useUserStore } from "../../../store";
 import AlbumSearch from "./AlbumSearch";
 import { FaEdit } from "react-icons/fa";
 import PlaylistDetails from "../../Me/PlaylistDetails";
+import Duplicate from "./Duplicate";
 
 export default function PlaylistComponent() {
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false);
     const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
     const [duplicateOpen, setDuplicateOpen] = useState<boolean>(false);
+    const [selectOpen, setSelectOpen] = useState<boolean>(false);
     const { playlist } = usePlaylistStore();
     const { user } = useUserStore();
 
@@ -46,41 +48,35 @@ export default function PlaylistComponent() {
                 <PlaylistDetails
                     isOpen={detailsOpen || duplicateOpen}
                     onRequestClose={() => {
-                        setDetailsOpen(false)
-                        setDuplicateOpen(false)
+                        if (detailsOpen) setDetailsOpen(false);
+                        if (duplicateOpen) {
+                            setDuplicateOpen(false);
+                            setSelectOpen(true);
+                        }
                     }}
                     prev={details}
-                    duplicate={duplicateOpen}
                 />
-                <div className="flex flex-row justify-between items-center">
-                    <div className="flex flex-row gap-3">
-                        <span className=" font-bold text-2xl">
-                            {playlist.name}
-                        </span>
-                        <button
-                            className="rounded-full p-2 bg-spoti-dark hover:bg-spoti-light"
-                            onClick={() => setDetailsOpen(true)}
-                        >
-                            <FaEdit className="text-black ml-[2px]" />
-                        </button>
-                    </div>
-                    <div className="flex flex-row gap-3">
-                        {!collapsed && !!user && (
-                            <button
-                            className="bg-spoti-light text-black p-2 rounded-full font-medium"
-                            onClick={() => setDuplicateOpen(true)}
-                        >
-                            <span className="mt-1">Duplicate</span>
-                        </button>
-                        ) }
-                        {!collapsed && ownsPlaylist && (
-                            <button
-                                className="bg-spoti-light text-black p-2 rounded-full font-medium"
-                                onClick={() => setOpen(true)}
+                <Duplicate
+                    isOpen={selectOpen}
+                    onRequestClose={() => setSelectOpen(false)}
+                />
+                <div className="flex flex-col justify-between flex-1 gap-3">
+                    <div className="flex flex-row justify-between gap-3 items-center">
+                        <div className="flex flex-row gap-3 items-center">
+                            <a
+                                className=" font-bold text-2xl hover:text-gray-400 transition-colors"
+                                href={playlist.external_urls.spotify}
+                                target="_blank"
                             >
-                                <span className="mt-1">Add from album</span>
+                                {playlist.name}
+                            </a>
+                            <button
+                                className="rounded-full p-1 h-fit bg-spoti-dark hover:bg-spoti-light"
+                                onClick={() => setDetailsOpen(true)}
+                            >
+                                <FaEdit className="text-black ml-[2px]" />
                             </button>
-                        )}
+                        </div>
                         <button
                             onClick={() => setCollapsed(!collapsed)}
                             className="flex flex-row items-center gap-1"
@@ -88,7 +84,29 @@ export default function PlaylistComponent() {
                             {collapsed ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                     </div>
+
+                    {!collapsed && (
+                        <div className="flex flex-row gap-3 text-sm bg-gray-dark rounded-md p-2">
+                            {!!user && (
+                                <button
+                                    className="bg-spoti-dark hover:bg-spoti-light text-black p-1 px-2 rounded-full font-medium"
+                                    onClick={() => setDuplicateOpen(true)}
+                                >
+                                    <span className="mt-1">Duplicate</span>
+                                </button>
+                            )}
+                            {ownsPlaylist && (
+                                <button
+                                    className="bg-spoti-dark hover:bg-spoti-light text-black p-1 px-2 rounded-full font-medium"
+                                    onClick={() => setOpen(true)}
+                                >
+                                    <span className="mt-1">Add from album</span>
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
+
                 <span className="text-sm md:text-base text-gray-400">
                     {playlist.description}
                 </span>

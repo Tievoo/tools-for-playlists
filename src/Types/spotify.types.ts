@@ -1,4 +1,4 @@
-interface PlaylistBase {
+export interface PlaylistBase {
     collaborative: boolean
     description: string
     external_urls: {

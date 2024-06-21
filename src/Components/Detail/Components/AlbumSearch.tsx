@@ -5,8 +5,8 @@ import { Album } from "../../../Types/spotify.types";
 import useClickOutside from "../../../Hooks/useClickOutside";
 import useAlbum from "../../../Hooks/useAlbum";
 import { FaXmark } from "react-icons/fa6";
-import { msFormat } from "../../../Functions/msFormat";
-import Checkbox from "../../Checkbox";
+import AlbumCard from "../../UI/AlbumCard";
+import CheckTrackList from "../../UI/CheckTrackList";
 
 interface Props {
     isOpen: boolean;
@@ -127,57 +127,17 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
 
                 {album && (
                     <div className="flex flex-col gap-3">
-                        <div className="flex flex-row gap-3">
-                            <img
-                                src={album.images?.at(0)?.url}
-                                alt=""
-                                className="w-36 h-36"
-                            />
-                            <div className="flex flex-col gap-1 justify-center">
-                                <span className="font-bold text-lg">
-                                    {album.name}
-                                </span>
-                                <span className="text-gray-400">
-                                    {album.artists
-                                        .map((a) => a.name)
-                                        .join(", ")}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="flex flex-row gap-1 font-spoti font-medium items-center">
-                            <Checkbox checked={allChecked} onChange={changeAll} />
-                            <span className="mt-2">Select All</span>
-                        </div>
-                        <div className="flex flex-col overflow-y-scroll flex-1 max-h-96">
-                            {album.tracks.items.map((track) => (
-                                <div
-                                    key={track.id}
-                                    className="flex flex-row items-center justify-between w-full gap-3 bg-gray-dark p-2 font-spoti hover:bg-gray-light transition-colors"
-                                >
-                                    <Checkbox checked={checks.get(track.id) || false} onChange={() => change(track.id)} />
-                                    <div className="flex flex-row gap-2">
-                                        <span>{track.name}</span>
-                                    </div>
-                                    <span>{msFormat(track.duration_ms)}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="flex flex-row gap-2 w-full">
-                            <button
-                                className="bg-green-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
-                                onClick={undoChanges}
-                                disabled={!modified}
-                            >
-                                Undo
-                            </button>
-                            <button
-                                className="bg-green-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
-                                onClick={save}
-                                disabled={!modified}
-                            >
-                                {modified ? "Save" : "Saved"}
-                            </button>
-                        </div>
+                        <AlbumCard album={album} />
+                        <CheckTrackList
+                            changeAll={changeAll}
+                            allChecked={allChecked}
+                            undoChanges={undoChanges}
+                            save={save}
+                            onChange={change}
+                            tracks={album.tracks.items}
+                            checks={checks}
+                            modified={modified}
+                        />
                     </div>
                 )}
             </div>

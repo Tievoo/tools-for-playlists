@@ -35,29 +35,29 @@ function CheckTrackList({
                         key={track.id}
                         className="flex flex-row items-center justify-between w-full gap-3 bg-gray-dark p-2 font-spoti hover:bg-gray-light transition-colors"
                     >
-                        <Checkbox
-                            checked={checks.get(track.id) || false}
-                            onChange={() => onChange(track.id)}
-                        />
-                        <div className="flex flex-row gap-2">
-                            <span>{track.name}</span>
+                        <div className="flex flex-row gap-3 items-center">
+                            <Checkbox
+                                checked={checks.get(track.id) || false}
+                                onChange={() => onChange(track.id)}
+                            />
+                            <div className="flex flex-row gap-2">
+                                <span>{track.name}</span>
+                            </div>
                         </div>
                         <span>{msFormat(track.duration_ms)}</span>
                     </div>
                 ))}
             </div>
             <div className="flex flex-row gap-2 w-full">
-                {
-                    undoChanges && (
-                        <button
-                            className="bg-red-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
-                            onClick={undoChanges}
-                            disabled={!modified}
-                        >
-                            Undo
-                        </button>
-                    )
-                }
+                {undoChanges && (
+                    <button
+                        className="bg-red-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2"
+                        onClick={undoChanges}
+                        disabled={!modified}
+                    >
+                        Undo
+                    </button>
+                )}
                 <button
                     className="bg-green-500 text-white p-2 rounded font-spoti font-medium disabled:bg-gray-light w-1/2 flex-1"
                     onClick={save}

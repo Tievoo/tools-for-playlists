@@ -25,29 +25,32 @@ const customStyles = {
     overlay: {
         backgroundColor: "rgba(0, 0, 0, 0.8)",
     },
-}
+};
 
-function Duplicate({
-    isOpen,
-    onRequestClose,
-}: Props) {
+function Duplicate({ isOpen, onRequestClose }: Props) {
     const { playlist } = usePlaylistStore();
     const [details, setDetails] = useState({
         name: playlist?.name || "",
         description: playlist?.description || "",
         isPublic: playlist?.public || false,
-    })
+        image: playlist?.images.at(0)?.url || "",
+    });
 
-    const tracks = useMemo(() => playlist?.tracks.items.map(t => t.track) || [], [playlist]);
-    const [checks, setChecks] = useState<Map<string, boolean>>(
-        () => new Map(tracks.map(t => [t.id, true]))
+    const tracks = useMemo(
+        () => playlist?.tracks.items.map((t) => t.track) || [],
+        [playlist]
     );
-    const allChecked = useMemo(() => [...checks.values()].every(c => c), [checks]);
+    const [checks, setChecks] = useState<Map<string, boolean>>(
+        () => new Map(tracks.map((t) => [t.id, true]))
+    );
+    const allChecked = useMemo(
+        () => [...checks.values()].every((c) => c),
+        [checks]
+    );
 
     const changeAll = () => {
-        setChecks(new Map([...checks].map(([k]) => [k, !allChecked])))
-    }
-
+        setChecks(new Map([...checks].map(([k]) => [k, !allChecked])));
+    };
 
     return (
         <Modal
@@ -59,7 +62,7 @@ function Duplicate({
                 className="flex flex-col bg-gray-main p-4 items-stretch gap-3 h-full"
                 style={{ minHeight: "100%", backfaceVisibility: "hidden" }}
             >
-                <PlaylistCard image={playlist?.images.at(0)?.url || ""} details={details} setDetails={setDetails} /> 
+                <PlaylistCard details={details} setDetails={setDetails} />
                 <CheckTrackList
                     checks={checks}
                     onChange={(id) => {
@@ -73,7 +76,7 @@ function Duplicate({
                 />
             </div>
         </Modal>
-    )
+    );
 }
 
 export default Duplicate;

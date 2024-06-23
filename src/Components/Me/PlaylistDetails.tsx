@@ -95,12 +95,12 @@ function PlaylistDetails({ isOpen, onRequestClose, prev }: Props) {
                     onChange={(e) => setDescription(e.target.value)}
                     className="border border-gray-300 rounded-md p-2 w-full"
                 />
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                     <Checkbox
                         checked={isPublic}
                         onChange={() => setIsPublic(!isPublic)}
                     />
-                    <span className="mt-2">Public?</span>
+                    <span className="mt-1">Public?</span>
                 </div>
                 <div className="flex justify-end gap-2">
                     <button

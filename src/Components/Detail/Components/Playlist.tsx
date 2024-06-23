@@ -14,7 +14,6 @@ export default function PlaylistComponent() {
     const [open, setOpen] = useState<boolean>(false);
     const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
     const [duplicateOpen, setDuplicateOpen] = useState<boolean>(false);
-    const [selectOpen, setSelectOpen] = useState<boolean>(false);
     const { playlist } = usePlaylistStore();
     const { user } = useUserStore();
 
@@ -46,19 +45,13 @@ export default function PlaylistComponent() {
                     onRequestClose={() => setOpen(false)}
                 />
                 <PlaylistDetails
-                    isOpen={detailsOpen || duplicateOpen}
-                    onRequestClose={() => {
-                        if (detailsOpen) setDetailsOpen(false);
-                        if (duplicateOpen) {
-                            setDuplicateOpen(false);
-                            setSelectOpen(true);
-                        }
-                    }}
+                    isOpen={detailsOpen}
+                    onRequestClose={() => setDetailsOpen(false)}
                     prev={details}
                 />
                 <Duplicate
-                    isOpen={selectOpen}
-                    onRequestClose={() => setSelectOpen(false)}
+                    isOpen={duplicateOpen}
+                    onRequestClose={() => setDuplicateOpen(false)}
                 />
                 <div className="flex flex-col justify-between flex-1 gap-3">
                     <div className="flex flex-row justify-between gap-3 items-center">

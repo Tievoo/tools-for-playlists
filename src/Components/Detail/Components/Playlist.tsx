@@ -53,7 +53,7 @@ export default function PlaylistComponent() {
                     isOpen={duplicateOpen}
                     onRequestClose={() => setDuplicateOpen(false)}
                 />
-                <div className="flex flex-col justify-between flex-1 gap-3">
+                <div className="flex flex-col gap-3">
                     <div className="flex flex-row justify-between gap-3 items-center">
                         <div className="flex flex-row gap-3 items-center">
                             <a

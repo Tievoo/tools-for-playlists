@@ -68,8 +68,8 @@ function TopTen() {
                             <TopPill id={artist.id} type="artists" />
                         </div>
                         <div className="flex flex-row gap-2 items-center">
-                            <span className="text-right w-28">
-                                {artist.count} tracks
+                            <span className="text-right w-16 md:w-28">
+                                {artist.count} {isMobile ? "t" : "tracks"}
                             </span>
                             <div className="w-16 md:w-20 h-2">
                                 <div

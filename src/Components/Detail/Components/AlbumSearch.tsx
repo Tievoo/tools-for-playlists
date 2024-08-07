@@ -7,6 +7,7 @@ import useAlbum from "../../../Hooks/useAlbum";
 import { FaXmark } from "react-icons/fa6";
 import AlbumCard from "../../UI/AlbumCard";
 import CheckTrackList from "../../UI/CheckTrackList";
+import useIsMobile from "../../../Hooks/useIsMobile";
 
 interface Props {
     isOpen: boolean;
@@ -19,7 +20,7 @@ const customStyles = {
         left: "50%",
         right: "auto",
         bottom: "auto",
-        width: "40%",
+        // width: "40%",
         maxHeight: "85%",
         transform: "translate(-50%, -50%)",
         padding: "0",
@@ -37,6 +38,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
     const mainRef = useRef<HTMLDivElement>(null);
     const [focus, setFocus] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const isMobile = useIsMobile();
     
 
     useClickOutside(mainRef, mainRef, () => setFocus(false));
@@ -54,7 +56,13 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
 
     return (
         <Modal
-            style={customStyles}
+            style={{
+                content: {
+                    ...customStyles.content,
+                    width: isMobile ? "90%" : "40%",
+                },
+                overlay: customStyles.overlay,
+            }}
             isOpen={isOpen}
             onRequestClose={close}
         >
@@ -88,7 +96,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                     </div>
 
                     {focus && (
-                        <div className="flex flex-col overflow-y-auto max-h-36 top-5 w-full mt-2 rounded">
+                        <div className="flex flex-col overflow-y-auto max-h-48 top-5 w-full mt-2 rounded">
                             {
                                 searchLoading && results.length === 0 && <span className="text-center py-5 bg-gray-dark">Loading...</span>
                             }
@@ -110,7 +118,7 @@ function AlbumSearch({ isOpen, onRequestClose }: Props) {
                                             alt=""
                                         />
                                         <div className="flex flex-col gap-1 items-start">
-                                            <span className="">
+                                            <span className="text-left">
                                                 {album.name}
                                             </span>
                                             <span className="text-sm text-gray-400">
